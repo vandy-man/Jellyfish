@@ -177,9 +177,11 @@ def _build_chat_openai_model(
     if base_url:
         kwargs.setdefault("base_url", base_url)
 
-    if not thinking:
-        extra_body = dict(kwargs.get("extra_body") or {})
+    extra_body = dict(kwargs.pop("extra_body", None) or {})
+    # 模型 params 已显式声明 thinking（如 z.ai GLM 强制思考模型）时不注入 enable_thinking。
+    if not thinking and "thinking" not in extra_body:
         extra_body["enable_thinking"] = False
+    if extra_body:
         kwargs["extra_body"] = extra_body
 
     return ChatOpenAI(**kwargs)

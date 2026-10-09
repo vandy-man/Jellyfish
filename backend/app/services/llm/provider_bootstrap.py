@@ -10,7 +10,7 @@ def bootstrap_builtin_providers() -> None:
             ProviderSpec(
                 key="openai",
                 display_name="OpenAI",
-                aliases=("openai",),
+                aliases=("openai", "zai", "z.ai", "glm", "zhipu"),
                 supported_categories=(
                     ModelCategoryKey.text,
                     ModelCategoryKey.image,
