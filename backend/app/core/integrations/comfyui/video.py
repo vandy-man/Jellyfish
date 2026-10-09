@@ -103,13 +103,13 @@ class ComfyUIVideoApiAdapter:
                         continue
                     if str(item.get("type") or "output") not in ("output", "temp"):
                         continue
-                    query = httpx.QueryDict(
+                    query = httpx.QueryParams(
                         {
                             "filename": item["filename"],
                             "subfolder": item.get("subfolder") or "",
                             "type": item.get("type") or "output",
                         }
-                    ).urlencode()
+                    )
                     video_url = f"{base_url}/view?{query}"
                     break
                 if video_url:
