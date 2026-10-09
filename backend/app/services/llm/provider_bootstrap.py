@@ -32,5 +32,13 @@ def bootstrap_builtin_providers() -> None:
                 supported_categories=(ModelCategoryKey.text,),
                 default_base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
             ),
+            ProviderSpec(
+                key="comfyui",
+                display_name="ComfyUI",
+                aliases=("comfyui", "comfy"),
+                supported_categories=(ModelCategoryKey.video,),
+                default_base_url="http://192.168.50.104:16080",
+                requires_api_key=False,
+            ),
         ]
     )
