@@ -458,3 +458,25 @@
   color: var(--cs-text-2);
   font-weight: 600;
 }
+
+/* Mobile: inspector overlays nearly the whole screen; let content reflow instead of clipping */
+@media (max-width: 767px) {
+  .cs-inspector {
+    padding: 12px;
+  }
+  .cs-inspector .ant-tag {
+    white-space: normal;
+  }
+  .cs-inspector-header {
+    padding: 10px 12px;
+  }
+  .cs-studio .ant-tabs-left > .ant-tabs-nav {
+    width: 96px;
+  }
+  .cs-group {
+    padding: 12px;
+  }
+  .cs-topbar {
+    gap: 8px;
+  }
+}

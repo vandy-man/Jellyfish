@@ -2451,7 +2451,7 @@ const ChapterStudio: React.FC = () => {
             className="cs-preview-card flex-1 min-h-0"
             bodyStyle={{ height: '100%', minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 12 }}
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               {showPreviewFrameSegmented ? (
                 <Segmented
                   size="small"
@@ -3002,6 +3002,8 @@ function Inspector(props: {
     onRefreshShotFrameImages,
   } = props
   const currentChapterId = chapterId ?? null
+  const inspectorScreens = Grid.useBreakpoint()
+  const inspectorMobile = inspectorScreens.md === false
   const [imageVersion, setImageVersion] = useState('v1')
   const [refImageType, setRefImageType] = useState<string | undefined>(undefined)
   const [refFrameTypeSelectLoading, setRefFrameTypeSelectLoading] = useState(false)
@@ -4745,7 +4747,7 @@ function Inspector(props: {
 
       <div className="cs-inspector flex-1 min-h-0 overflow-auto">
         <Tabs
-          tabPosition="left"
+          tabPosition={inspectorMobile ? 'top' : 'left'}
           activeKey={inspectorTabKey}
           onChange={(activeKey) => setInspectorTabKey(activeKey as InspectorTabKey)}
           items={(() => {
