@@ -5,7 +5,6 @@ import {
   Card,
   Divider,
   Dropdown,
-  Grid,
   Image,
   Input,
   Layout,
@@ -39,7 +38,6 @@ import {
   EyeOutlined,
   FileTextOutlined,
   LinkOutlined,
-  UnorderedListOutlined,
   MergeCellsOutlined,
   PauseCircleOutlined,
   PictureOutlined,
@@ -504,14 +502,6 @@ const ChapterStudio: React.FC = () => {
   const [selectedShotIds, setSelectedShotIds] = useState<string[]>([])
   const locationSelectionAppliedRef = useRef(false)
   const lastSelectedIndexRef = useRef<number>(-1)
-
-  const screens = Grid.useBreakpoint()
-  const isMobile = screens.md === false
-  const [mobileLeftOpen, setMobileLeftOpen] = useState(false)
-
-  useEffect(() => {
-    if (isMobile && selectedShotId) setMobileLeftOpen(false)
-  }, [selectedShotId, isMobile])
   const [shotDetail, setShotDetail] = useState<ShotDetailRead | null>(null)
   const [dialogLines, setDialogLines] = useState<ShotDialogLineRead[]>([])
   const [frameImages, setFrameImages] = useState<ShotFrameImageRead[]>([])
@@ -2133,15 +2123,6 @@ const ChapterStudio: React.FC = () => {
         <div className="flex-1 min-w-0" />
 
         <div className="flex items-center gap-2 shrink-0">
-          {isMobile && (
-            <Tooltip title="分镜列表">
-              <Button
-                size="small"
-                icon={<UnorderedListOutlined />}
-                onClick={() => setMobileLeftOpen((v) => !v)}
-              />
-            </Tooltip>
-          )}
           <Dropdown menu={{ items: toolbarSettingsItems }} trigger={['click']}>
             <Tooltip title="工作台设置">
               <Button size="small" icon={<SettingOutlined />} />
@@ -2169,23 +2150,13 @@ const ChapterStudio: React.FC = () => {
         onPointerUp={endResize}
         onPointerCancel={endResize}
       >
-        {/* 左侧：分镜列表（手机端为绝对定位浮层，不再挤压中央） */}
+        {/* 左侧：分镜列表 */}
         <Sider
-          width={isMobile ? Math.min(prefs.leftWidth, 300) : prefs.leftWidth}
+          width={prefs.leftWidth}
           collapsedWidth={0}
-          collapsed={isMobile ? !mobileLeftOpen : undefined}
           className="cs-left flex flex-col"
           style={{
             overflow: 'hidden',
-            ...(isMobile
-              ? {
-                  position: 'absolute',
-                  zIndex: 30,
-                  top: 0,
-                  height: '100%',
-                  boxShadow: '4px 0 12px rgba(0,0,0,0.08)',
-                }
-              : {}),
           }}
         >
           <div className="cs-group m-3 mb-2 flex flex-col gap-2 min-w-0">
@@ -2413,7 +2384,7 @@ const ChapterStudio: React.FC = () => {
         />
 
         {/* 中央：主预览区 */}
-        <Content className="cs-main min-w-0 min-h-0 flex flex-col" style={{ padding: isMobile ? 8 : 16, position: 'relative', overflow: 'hidden' }}>
+        <Content className="cs-main min-w-0 min-h-0 flex flex-col" style={{ padding: 16, position: 'relative', overflow: 'hidden' }}>
           <Card
             title={
               <div className="flex items-center gap-3 min-w-0">
@@ -2451,7 +2422,7 @@ const ChapterStudio: React.FC = () => {
             className="cs-preview-card flex-1 min-h-0"
             bodyStyle={{ height: '100%', minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 12 }}
           >
-            <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2">
               {showPreviewFrameSegmented ? (
                 <Segmented
                   size="small"
@@ -2680,7 +2651,7 @@ const ChapterStudio: React.FC = () => {
         </Content>
 
         {/* 右侧：属性面板（推挤 / 覆盖） */}
-        {prefs.inspectorMode === 'push' && !isMobile ? (
+        {prefs.inspectorMode === 'push' ? (
           <>
             {/* 右侧拖拽条（推挤模式） */}
             {prefs.inspectorOpen && (
@@ -2763,7 +2734,7 @@ const ChapterStudio: React.FC = () => {
               <div
                 className="absolute top-0 right-0 h-full"
                 style={{
-                  width: isMobile ? 'min(92vw, 400px)' : prefs.rightWidth,
+                  width: prefs.rightWidth,
                   background: '#f9fafc',
                   borderLeft: '2px solid #cbd5e1',
                   zIndex: 20,
@@ -3002,8 +2973,6 @@ function Inspector(props: {
     onRefreshShotFrameImages,
   } = props
   const currentChapterId = chapterId ?? null
-  const inspectorScreens = Grid.useBreakpoint()
-  const inspectorMobile = inspectorScreens.md === false
   const [imageVersion, setImageVersion] = useState('v1')
   const [refImageType, setRefImageType] = useState<string | undefined>(undefined)
   const [refFrameTypeSelectLoading, setRefFrameTypeSelectLoading] = useState(false)
@@ -4747,7 +4716,7 @@ function Inspector(props: {
 
       <div className="cs-inspector flex-1 min-h-0 overflow-auto">
         <Tabs
-          tabPosition={inspectorMobile ? 'top' : 'left'}
+          tabPosition="left"
           activeKey={inspectorTabKey}
           onChange={(activeKey) => setInspectorTabKey(activeKey as InspectorTabKey)}
           items={(() => {
