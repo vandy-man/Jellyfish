@@ -33,7 +33,7 @@ export function resolveAssetUrl(value?: string | null): string | undefined {
       window.__ENV?.BACKEND_URL ||
       import.meta.env.VITE_BACKEND_URL ||
       import.meta.env.VITE_API_BASE_URL ||
-      'http://localhost:8000'
+      (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000')
     return new URL(trimmed, OpenAPI.BASE || fallbackBase).toString()
   } catch {
     return trimmed

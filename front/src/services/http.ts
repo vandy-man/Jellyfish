@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
-const backendBaseUrl = import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000'
+// 运行时 env.js 优先；空串=同源相对路径（nginx /api 代理），兼容 HTTPS 隧道访问。
+const backendBaseUrl = window.__ENV?.BACKEND_URL ?? import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8000'
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? `${backendBaseUrl}/api`
 
 const http: AxiosInstance = axios.create({
