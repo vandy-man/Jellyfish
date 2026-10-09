@@ -268,7 +268,7 @@ const MainLayout: React.FC = () => {
               flexDirection: 'column',
             }}
           >
-            <div className="w-full h-full min-h-0 overflow-hidden flex flex-col">
+            <div className="w-full h-full min-h-0 overflow-y-auto flex flex-col">
               <Outlet />
             </div>
           </Content>
