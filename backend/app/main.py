@@ -57,6 +57,10 @@ async def lifespan(app: FastAPI):
     """应用生命周期：启动时初始化，关闭时清理。"""
     # 启动时：供应商注册 + 任务执行器注册（幂等）
     bootstrap_all_registries()
+    # 确保 S3 bucket 存在（幂等；init_storage 原本无调用方，上传会 NoSuchBucket）
+    from app.core import storage
+
+    storage.init_storage()
     yield
     # 关闭时：清理资源
     pass
