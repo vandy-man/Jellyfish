@@ -581,6 +581,7 @@ export function ChaptersTab() {
         dataSource={chapters}
         pagination={{ pageSize: 10 }}
         size="small"
+        scroll={{ x: 'max-content' }}
       />
 
       <ChapterRawTextEditorModal

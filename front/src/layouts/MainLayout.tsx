@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { Layout, Menu, theme, Dropdown, Space, Avatar, Select, Breadcrumb } from 'antd'
+import React, { useMemo, useState } from 'react'
+import { Layout, Menu, theme, Dropdown, Space, Avatar, Select, Breadcrumb, Drawer, Grid } from 'antd'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -29,6 +29,10 @@ const MainLayout: React.FC = () => {
   const user = useAppStore((state) => state.user)
   const language = useAppStore((state) => state.language)
   const setLanguage = useAppStore((state) => state.setLanguage)
+
+  const screens = Grid.useBreakpoint()
+  const isMobile = screens.md === false
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   const selectedKeys = useMemo(() => {
     if (location.pathname === '/projects' || location.pathname.startsWith('/projects/')) return ['projects']
@@ -145,6 +149,34 @@ const MainLayout: React.FC = () => {
     },
   ]
 
+  const siderContent = (
+    <>
+      <div className="flex items-center h-16 px-4 border-b border-solid" style={{ borderColor: token.colorBorderSecondary }}>
+        <Link to="/projects" className="flex items-center gap-2 min-w-0" onClick={() => setDrawerOpen(false)}>
+          <img src="/logo.svg" alt="Jellyfish" className="w-8 h-8 shrink-0" />
+          {!collapsed && (
+            <div className="min-w-0">
+              <div className="text-base font-semibold text-gray-900 truncate">
+                {t('title')}
+              </div>
+              <div className="text-xs text-gray-500 truncate">
+                {t('subtitle')}
+              </div>
+            </div>
+          )}
+        </Link>
+      </div>
+
+      <Menu
+        mode="inline"
+        selectedKeys={selectedKeys}
+        items={menuItems}
+        style={{ borderRight: 'none', paddingTop: 8 }}
+        onClick={() => setDrawerOpen(false)}
+      />
+    </>
+  )
+
   return (
     <Layout
       style={{
@@ -154,41 +186,35 @@ const MainLayout: React.FC = () => {
         flexDirection: 'row',
       }}
     >
-      <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        width={220}
-        style={{
-          flexShrink: 0,
-          background: token.colorBgContainer,
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
-          overflow: 'auto',
-        }}
-      >
-        <div className="flex items-center h-16 px-4 border-b border-solid" style={{ borderColor: token.colorBorderSecondary }}>
-          <Link to="/projects" className="flex items-center gap-2 min-w-0">
-            <img src="/logo.svg" alt="Jellyfish" className="w-8 h-8 shrink-0" />
-            {!collapsed && (
-              <div className="min-w-0">
-                <div className="text-base font-semibold text-gray-900 truncate">
-                  {t('title')}
-                </div>
-                <div className="text-xs text-gray-500 truncate">
-                  {t('subtitle')}
-                </div>
-              </div>
-            )}
-          </Link>
-        </div>
-
-        <Menu
-          mode="inline"
-          selectedKeys={selectedKeys}
-          items={menuItems}
-          style={{ borderRight: 'none', paddingTop: 8 }}
-        />
-      </Sider>
+      {!isMobile && (
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          width={220}
+          style={{
+            flexShrink: 0,
+            background: token.colorBgContainer,
+            borderRight: `1px solid ${token.colorBorderSecondary}`,
+            overflow: 'auto',
+          }}
+        >
+          {siderContent}
+        </Sider>
+      )}
+      {isMobile && (
+        <Drawer
+          placement="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          width={260}
+          styles={{ body: { padding: 0, background: token.colorBgContainer } }}
+          title={null}
+          closeIcon={null}
+        >
+          {siderContent}
+        </Drawer>
+      )}
 
       <Layout
         style={{
@@ -210,9 +236,9 @@ const MainLayout: React.FC = () => {
           <Space size="middle" className="flex-1 min-w-0">
             <span
               className="cursor-pointer text-xl shrink-0"
-              onClick={toggleCollapsed}
+              onClick={() => (isMobile ? setDrawerOpen(true) : toggleCollapsed())}
             >
-              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              {isMobile || collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </span>
             <Breadcrumb
               items={breadcrumbItems}
@@ -225,7 +251,7 @@ const MainLayout: React.FC = () => {
             <Select
               size="small"
               value={language}
-              style={{ width: 120 }}
+              style={{ width: isMobile ? 88 : 120 }}
               onChange={(value) => {
                 setLanguage(value)
                 void i18n.changeLanguage(value)
