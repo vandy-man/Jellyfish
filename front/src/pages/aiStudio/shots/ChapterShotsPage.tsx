@@ -5,6 +5,7 @@ import {
   Divider,
   Empty,
   Form,
+  Grid,
   Input,
   Layout,
   Modal,
@@ -517,6 +518,8 @@ export function ChapterShotsPage() {
       <Empty description="没有匹配的分镜" image={Empty.PRESENTED_IMAGE_SIMPLE} />
     ) : undefined
 
+  const screens = Grid.useBreakpoint()
+  const isMobile = screens.md === false
   const tableScrollY = 'calc(100vh - 320px)'
 
   if (!projectId || !chapterId) {
@@ -527,13 +530,15 @@ export function ChapterShotsPage() {
     <Layout style={{ height: '100%', minHeight: 0, background: '#eef2f7' }}>
       <Header
         style={{
-          padding: '0 16px',
+          padding: isMobile ? '8px 12px' : '0 16px',
           background: '#fff',
           borderBottom: '1px solid #e2e8f0',
           boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
           display: 'flex',
+          flexWrap: 'wrap',
           alignItems: 'center',
           gap: 12,
+          ...(isMobile ? { height: 'auto', minHeight: 56, lineHeight: 'normal' } : {}),
         }}
       >
         <Link
@@ -582,9 +587,9 @@ export function ChapterShotsPage() {
 
       <Content
         style={{
-          padding: 16,
+          padding: isMobile ? 8 : 16,
           minHeight: 0,
-          overflow: 'hidden',
+          overflow: isMobile ? 'auto' : 'hidden',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -593,21 +598,28 @@ export function ChapterShotsPage() {
           title={
             <div className="flex flex-wrap items-center gap-3">
               <span>分镜</span>
-              {shots.length > 0 ? (
+              {shots.length > 0 && !isMobile ? (
                 <Tag color="warning" className="!mr-0">
                   当前章节已存在分镜，若要重新提取，请先删除现有分镜
                 </Tag>
               ) : null}
             </div>
           }
-          style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+          headStyle={isMobile ? { flexWrap: 'wrap', rowGap: 8 } : undefined}
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflow: isMobile ? 'auto' : 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
           bodyStyle={{
             flex: 1,
             minHeight: 0,
-            overflow: 'hidden',
+            overflow: isMobile ? 'auto' : 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            padding: 16,
+            padding: isMobile ? 12 : 16,
           }}
           extra={
             <Space wrap>
@@ -727,7 +739,7 @@ export function ChapterShotsPage() {
                 columns={columns}
                 dataSource={filteredShots}
                 pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [10, 20, 50, 100] }}
-                scroll={{ x: 1180, y: tableScrollY }}
+                scroll={{ x: 1180, y: isMobile ? undefined : tableScrollY }}
                 locale={{
                   emptyText: tableEmpty ?? <Empty description="暂无数据" image={Empty.PRESENTED_IMAGE_SIMPLE} />,
                 }}
@@ -749,7 +761,7 @@ export function ChapterShotsPage() {
         maskClosable={!extracting}
         keyboard={!extracting}
         destroyOnClose
-        width={520}
+        width={isMobile ? 'calc(100vw - 32px)' : 520}
       >
         <Form form={createForm} layout="vertical" preserve={false}>
           <Form.Item name="title" label="标题" rules={[{ required: true, message: '请填写标题' }]}>
